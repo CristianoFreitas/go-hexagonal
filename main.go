@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"log"
 
 	db2 "github.com/cristianofreitas/go-hexagonal/adapters/db"
 	"github.com/cristianofreitas/go-hexagonal/application"
@@ -9,10 +10,16 @@ import (
 )
 
 func main() {
-	db, _ := sql.Open("sqlite3", "dbsqlite")
+	db, _ := sql.Open("sqlite3", "db.sqlite")
 	productDbAdapter := db2.NewProductDb(db)
 	productService := application.NewProductService(productDbAdapter)
-	product, _ := productService.Create("Product", 30)
+	product, err := productService.Create("Product", 30)
 
-	productService.Enable(product)
+	if err != nil {
+		log.Fatal(err.Error())
+	} else {
+
+		productService.Enable(product)
+	}
+
 }
